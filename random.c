@@ -3,7 +3,7 @@
 #include <time.h>
 
 void rnd(int a,int b,int n) {
-  //random number create and output
+  //random numbers create and output
   //a:min val
   //b:max val
   //n:random number,when n is less than 0,it represents the sum of n random numbers
