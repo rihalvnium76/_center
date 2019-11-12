@@ -7,8 +7,8 @@ void rnd(int a,int b,int n) {
   //a:min val
   //b:max val
   //n:random number,when n is less than 0,it represents the sum of n random numbers
-	printf("> ");
-	if (n < 0) {
+  printf("> ");
+  if (n < 0) {
     int s = 0;
     for (int i=n; i; ++i)
       s += rand() % (b - a + 1) + a;
