@@ -27,5 +27,9 @@ int main()
 	//Write method
 	C2i(&a[0])=0x99887766;
 	printf("%x\n",C2i(&a[0]));
-   return 0;
+	
+	//Simulate union
+	int32_t d=0x11223344;
+	for(int i=0;i<4;++i)printf("%x ",((char*)&d)[i]);
+	return 0;
 }
