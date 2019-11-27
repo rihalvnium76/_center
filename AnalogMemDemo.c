@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <limits.h>
+//#define C2i(c_ptr) *((int32_t*)c_ptr)
 int32_t c2i(const char *c){
     return *((int32_t*)c);
 }
