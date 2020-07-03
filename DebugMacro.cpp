@@ -13,12 +13,12 @@
 */
 #ifdef DEBUG_
 
-static bool *DBG_C_PTR;
+static bool *DBG_C_PTR = NULL;
 
 #define dbgt(T) const char *TAG = #T;
 #define dbgc(C_PTR) DBG_C_PTR = (C_PTR);
 
-#define dbgo(M, FMT, ...) if(*DBG_C_PTR) fprintf(stderr, "[" #M "]%s/%d: " FMT, TAG, __LINE__, ##__VA_ARGS__);
+#define dbgo(M, FMT, ...) if(!DBG_C_PTR || *DBG_C_PTR) fprintf(stderr, "[" #M "]%s/%d: " FMT, TAG, __LINE__, ##__VA_ARGS__);
 #define dbgv(FMT, ...) dbgo(V, FMT, ##__VA_ARGS__)
 #define dbgi(FMT, ...) dbgo(I, FMT, ##__VA_ARGS__)
 #define dbgd(FMT, ...) dbgo(D, FMT, ##__VA_ARGS__)
