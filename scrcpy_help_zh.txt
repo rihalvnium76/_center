@@ -190,7 +190,7 @@ Shortcuts（快捷键）:
         按下电源键(Power on)
 
     Ctrl+o
-        关闭设备屏幕 (保持投影)
+        关闭设备屏幕非锁屏 (保持投影)
 
     Ctrl+Shift+o
         开启设备屏幕
