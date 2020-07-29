@@ -4,10 +4,10 @@
 
 // Debug Output Macro
 /*
-  DBG_C_PTR : Debug output Contrl Pointer (bool* type)
+  DBG_C_PTR : Debug output Control Pointer (bool* type)
   dbgt : Set TAG
   dbgc : Set DBG_C_PTR
-  dbgo : Debug output code with the output display switch
+  dbgo : Debug output code with the control of debug output switch
   dbgv/dbgi/dbgd/dbgw/dbge :
     Encapsulation of dbgo marco, ouput with different log level   
 */
