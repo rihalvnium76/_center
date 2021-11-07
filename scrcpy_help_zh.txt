@@ -1,10 +1,5 @@
-scrcpy 1.16
+scrcpy 1.19
 
-dependencies:
- - SDL 2.0.12
- - libavcodec 58.91.10
- - libavformat 58.45.1
- - libavutil 56.51.100
 =======================================
 Usage: scrcpy [options]
 
@@ -41,8 +36,21 @@ Options:
 
         默认为0
 
+    --display-buffer ms
+        在显示前添加缓冲延迟（以毫秒为单位）。
+        这会增加延迟以补偿抖动。
+
+        默认0 (无缓冲).
+
+    --encoder name
+        使用特定的MediaCodec编码器（必须是H.264编码器）。
+
     --force-adb-forward
         不要尝试使用“adb reverse”连接设备
+
+    --forward-all-clicks
+        默认情况下，右键单击触发返回键（或打开电源），中键单击触发HOME键。
+        此选项将禁用这些快捷方式，并将单击转发到设备。
 
     -f, --fullscreen
         以全屏启动
@@ -50,11 +58,16 @@ Options:
     -h, --help
         显示帮助
 
-    --lock-video-orientation value
-        将视频方向锁定为值
-		可能的值为-1（未锁定）、0、1、2和3
-		设备的自然方向为0，每增加一个逆时针旋转90度
-		默认值为-1（未锁定）
+    --legacy-paste
+        在Ctrl+v（如MOD+Shift+v）上将计算机剪贴板文本作为一系列按键事件插入。
+        这是针对某些设备在以编程方式设置设备剪贴板时未按预期运行的解决方法。
+
+    --lock-video-orientation[=value]
+        将视频方向锁定到值。
+        可能的值为“unlocked”、“initial”（锁定到初始方向）、0、1、2 和 3。
+        自然设备方向为 0，每个增量增加 90 度逆时针旋转。
+        默认为“unlocked”。
+        传递不带参数的选项等同于传递“initial”。
 
     --max-fps value
         限制屏幕捕获帧率 (仅支持Android 10即以上的设备，但可能可以在更早版本OS中使用)
@@ -70,6 +83,9 @@ Options:
 
     -N, --no-display
         不显示设备内容(仅屏幕录像开启时)
+
+    --no-key-repeat
+        按住某个键时不要发送重复的键事件。
 
     --no-mipmaps
         如果渲染器是OpenGL 3.0+或OpenGL ES 2.0+，则会自动生成mipmap以提高缩小质量。
