@@ -27,12 +27,12 @@ def convert(outputDir: str, inputPaths: list[str]):
         subprocess.run(COMMAND.format(i, getOutputPath(i)), shell = True)
         
 
-# convert("""F:\AVideo\\BandicamRecord\雀魂\_o""", [
-#     """F:\AVideo\BandicamRecord\雀魂\_todo\202109030953_人机点了大三元.mp4""",
-#     """F:\AVideo\BandicamRecord\雀魂\_todo\202111101351_赤木铳还是南乡代打.mp4"""
+# convert(r"""D:\_o""", [
+#     r"""D:\_todo\xxxx.mp4""",
+#     r"""D:\_todo\yyyy.mp4"""
 # ])
 
-convert("""D:\_o""", r"""
+convert(r"""D:\_o""", r"""
 D:\_todo\xxxx.mp4
 D:\_todo\yyyy.mp4
 """.splitlines()) #[1:])
