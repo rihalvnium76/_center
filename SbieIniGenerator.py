@@ -48,8 +48,8 @@ def SandboxieClosedFilePathGenerator(openPaths: Iterable[str], excludingFiles: b
     printIniText(s)
 
 SandboxieClosedFilePathGenerator(r'''
-"D:\AProgram\QQ\"
-"D:\Documents\Tencent Files\"
+"D:\AAA\BBB"
+"D:\Documents\BBB\"
 D:\a
-F:\ATrPC
+F:\XXX
 '''.splitlines())
