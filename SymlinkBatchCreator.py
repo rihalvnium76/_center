@@ -35,7 +35,7 @@ def CreateSymbolLinks(symbolLinks: dict[str, str | Iterable[str]], autoCompleteS
             else:
                 createSymbolLink(k, v)
     else:
-        print("This script need to be run as admin")
+        print("This script needs to be run as admin")
 
 
 #LATEST_DIR = r'D:\Picture\lastest'
