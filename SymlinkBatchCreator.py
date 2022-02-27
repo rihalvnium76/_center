@@ -59,12 +59,12 @@ def FixSymbolLinkPaths(scanRootPath: str, replacingPrefixes: dict[str, str]) -> 
             newTargetPath = handlePrefix(targetPath)
             if newTargetPath:
                 print(f'[>] {path} : {targetPath} -> {newTargetPath}')
-                # os.remove(path)
-                # createSymbolLink(path, newTargetPath)
+                os.remove(path)
+                createSymbolLink(path, newTargetPath)
             else:
                 print(f'[-] {path} : {targetPath}')
 
-    if True or isRunningAsAdmin():
+    if isRunningAsAdmin():
         for root, dirs, files in os.walk(scanRootPath):
             for dir in dirs:
                 handle(os.path.join(root, dir))
