@@ -8,6 +8,9 @@ import os
 #ffmpeg -hide_banner -i "<source_file>" -c:v libx264 -preset veryslow -crf 23 -refs 6 -bf 6 -g 600 -keyint_min 1 -sc_threshold 60 -deblock 1:1 -qcomp 0.5 -psy-rd 0.4:0 -aq-mode 2 -aq-strength 0.8 -me_method 2 -c:a copy "<output_file>"
 ##x264 --crf 23 --preset veryslow -r 6 -b 6 -I 600 -i 1 --scenecut 60 -f 1:1 --qcomp 0.5 --psy-rd 0.4:0 --aq-mode 2 --aq-strength 0.8 --me umh -o "<output_file>" "<source_file>"
 
+# --- experimental ---
+# -c:v hevc -x265-params range=full -dst_range 1
+
 def convert(outputDir: str, inputPaths: Iterable[str], allowTrimPath: bool = True) -> None:
     def getCommandLine(inputPath: str, outputPath: str) -> list[str]:
         return ('ffmpeg', '-hide_banner', '-i', inputPath, '-c:v', 'libx264', '-preset', 'veryslow', '-crf', '23', '-refs', '6', '-bf', '6', '-g', '600', '-keyint_min', '1', '-sc_threshold', '60', '-deblock', '1:1', '-qcomp',
