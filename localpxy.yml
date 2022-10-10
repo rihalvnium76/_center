@@ -1,0 +1,107 @@
+proxies:
+  - name: PORT_1080
+    type: socks5
+    server: "127.0.0.1"
+    port: 1080
+    udp: true
+
+proxy-groups:
+  - name: PROXY
+    type: select
+    proxies:
+      - "[Local]"
+      - "[XXX]"
+  - name: _ALL_
+    type: select
+    proxies:
+      - DIRECT
+      - PROXY
+      - REJECT
+  # - name: TEST
+  #   type: select
+  #   proxies:
+  #     - DIRECT
+  #     - PROXY
+  #     - REJECT
+
+  - name: "[Local]"
+    type: select
+    proxies:
+      - PORT_1080
+  
+  - name: "[XXX]"
+    type: select
+    use:
+      - XXXProvider
+
+  - name: _CN_
+    type: select
+    proxies:
+      - DIRECT
+      - PROXY
+
+  - name: STEAM
+    type: select
+    proxies:
+      - DIRECT
+      - PROXY
+
+  - name: YYY
+    type: select
+    proxies:
+      - PROXY
+      - DIRECT
+      
+
+proxy-providers:
+  XXXProvider:
+    type: http
+    url: "???"
+    path: "./_data/???.yml"
+
+rules:
+  # Proxy Software
+
+  - PROCESS-NAME,Qv2ray.exe,DIRECT
+  - PROCESS-NAME,v2ray.exe,DIRECT
+  - PROCESS-NAME,xray.exe,DIRECT
+  - PROCESS-NAME,qv2ray,DIRECT
+  - PROCESS-NAME,v2ray,DIRECT
+  - PROCESS-NAME,xray,DIRECT
+  - PROCESS-NAME,ShadowsocksR-dotnet4.0.exe,DIRECT
+  - PROCESS-NAME,ShadowsocksR-dotnet2.0.exe,DIRECT
+  - PROCESS-NAME,ShadowsocksR.exe,DIRECT
+
+  # Custom Program
+
+  - PROCESS-NAME,YYY.exe,YYY
+
+  - PROCESS-NAME,Steam.exe,STEAM
+  - PROCESS-NAME,GameOverlayUI.exe,STEAM
+  - PROCESS-NAME,steamerrorreporter.exe,STEAM
+  - PROCESS-NAME,steamerrorreporter64.exe,STEAM
+  - PROCESS-NAME,streaming_client.exe,STEAM
+  - PROCESS-NAME,steamwebhelper.exe,STEAM
+  - PROCESS-NAME,html5app_steam.exe,STEAM
+
+  # Genernal
+
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT
+
+  - GEOIP,CN,_CN_
+  - IP-CIDR,119.28.28.28/32,_CN_,no-resolve
+  - DOMAIN-SUFFIX,cn,_CN_
+  - DOMAIN-SUFFIX,qq.com,_CN_
+  - DOMAIN-SUFFIX,ygsoft.com,_CN_
+
+  - DOMAIN-KEYWORD,gstatic,PROXY
+  - DOMAIN-KEYWORD,google,PROXY
+  - PROCESS-NAME,discord.exe,PROXY
+  - PROCESS-NAME,discord,PROXY
+  - DOMAIN-KEYWORD,pixiv,PROXY
+
+  - MATCH,_ALL_
