@@ -24,6 +24,7 @@ function LogFactoryV4(tag, parent, id = String(Math.random()).slice(2), output =
 }
 
 function LogFactoryV4(o,t,n=String(Math.random()).slice(2),r=console.log,c=r=>`[${o} ${n}]${r&&t?t.h(--r):""}`,e=o=>(...t)=>r(c(o),...t)){let l=e(0);return l.h=c,l.t=e(1),l.s=e(-1),l}
+/// function LogFactoryV4_TS(o:string,t:any,n=String(Math.random()).slice(2),r=console.log,c=(r:number)=>`[${o} ${n}]${r&&t?t.h(--r):""}`,e=(o:number)=>(...t:any)=>r(c(o),...t)){let l:any=e(0);return l.h=c,l.t=e(1),l.s=e(-1),l}function LogFactoryV4_TS(o:string,t:any,n=String(Math.random()).slice(2),r=console.log,c=(r:number)=>`[${o} ${n}]${r&&t?t.h(--r):""}`,e=(o:number)=>(...t:any)=>r(c(o),...t)){let l:any=e(0);return l.h=c,l.t=e(1),l.s=e(-1),l}
 
 let a=LogFactoryV4('A'),b=LogFactoryV4('B',a),c=LogFactoryV4('C',b)
 c(1)
