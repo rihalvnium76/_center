@@ -13,10 +13,8 @@ function LiteLogFactoryV3(tag, parent = {}, id = String(Math.random()).slice(2))
 /** @deprecated */
 function LiteLogFactoryV3(b,d={},c=String(Math.random()).slice(2)){function a(...a){console.log(b,c,...a)}return a.tag=b,a.id=c,a.t=(...b)=>a("<-",d.tag,d.id,...b),a}
 
-// V4.2
-function LogFactoryV4(tag, parent, head = n => `[${tag} ${String(Math.random()).slice(2)}]${n && parent ? parent.h(--n) : ""}`, generator = n => (...v) => console.log(head(n), ...v)) {
-  /** Log */
-  const Log = generator(0)
+// V4.3
+function LogFactoryV4(tag, parent, head = n => `[${tag} ${String(Math.random()).slice(2)}]${n && parent ? parent.h(--n) : ""}`, generator = n => (...v) => console.log(head(n), ...v), Log = generator(0)) {
   Log.h = head
   /** Log with parent*/
   Log.t = generator(1)
@@ -25,15 +23,15 @@ function LogFactoryV4(tag, parent, head = n => `[${tag} ${String(Math.random()).
   return Log
 }
 
-function LogFactoryV4(o,t,n=n=>`[${o} ${String(Math.random()).slice(2)}]${n&&t?t.h(--n):""}`,r=o=>(...t)=>console.log(n(o),...t)){let c=r(0);return c.h=n,c.t=r(1),c.s=r(-1),c}
+function LogFactoryV4(o,n,r=r=>`[${o} ${String(Math.random()).slice(2)}]${r&&n?n.h(--r):""}`,t=o=>(...n)=>console.log(r(o),...n),c=t(0)){return c.h=r,c.t=t(1),c.s=t(-1),c}
 
 /// with comments
-function LogFactoryV4(/** string tag */ o, /** parent Log */ t, /** @private log head (tag + id) */ n=n=>`[${o} ${String(Math.random()).slice(2)}]${n&&t?t.h(--n):""}`, /** @private log function generator */ r=o=>(...t)=>console.log(n(o),...t)){let c=r(0);return c.h=n, /** log with parent head (usage: log.t(...)) */ c.t=r(1), /** log with stack (usage: log.s(...)) */ c.s=r(-1), /** log (usage: log(...)) */ c}
+function LogFactoryV4(/** string tag */ o, /** parent Log */ n, /** @immutable log head (tag + id) */ r=r=>`[${o} ${String(Math.random()).slice(2)}]${r&&n?n.h(--r):""}`, /** @immutable log function generator */ t=o=>(...n)=>console.log(r(o),...n), /** @immutable Logger (usage: log(...)) */ c=t(0)){return c.h=r, /** log with parent head (usage: log.t(...)) */ c.t=t(1), /** log with stack (usage: log.s(...)) */ c.s=t(-1), c}
 
 /// v4.2 TS
 // interface Log {(...v: any): void; h(n: number): string; t(...v: any): void; s(...v: any): void}
 // function LogFactoryV4T(tag: string, parentLog?: Log): Log;
-// function LogFactoryV4T(o:string,t?:Log,n=(n:number)=>`[${o} ${String(Math.random()).slice(2)}]${n&&t?t.h(--n):""}`,r=(o:number)=>(...t:any)=>console.log(n(o),...t)){let c:any=r(0);return c.h=n,c.t=r(1),c.s=r(-1),c}
+// function LogFactoryV4T(o:string,n:any,r=(r:any)=>`[${o} ${String(Math.random()).slice(2)}]${r&&n?n.h(--r):""}`,t=(o:any)=>(...n:any)=>console.log(r(o),...n),c:any=t(0)){return c.h=r,c.t=t(1),c.s=t(-1),c}
 
 let a=LogFactoryV4('A'),b=LogFactoryV4('B',a),c=LogFactoryV4('C',b)
 c(1)
