@@ -1,0 +1,6 @@
+Encoding: UTF-8
+
+Indexes:
+"5639AA32E728FB13.7z" : "维塔大脱出完美存档"
+"24B4ABCA0E735F98.7z" : "拉拉的神奇迷宫完美存档"
+"BBC4B53221A83C82.7z" : "[Set]Koikatu_F_20220216103549516_春野 千佳_idle.7z"

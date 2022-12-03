@@ -1,0 +1,4 @@
+Encoding: UTF-8
+
+Indexes:
+"E58A8FE6AE555732.7z" : [LOCAL_DB]

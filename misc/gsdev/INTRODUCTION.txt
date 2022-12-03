@@ -1,0 +1,107 @@
+Origin:
+==================
+https://pastebin.com/10U93dbf
+https://pastebin.com/pKMSemfc
+
+Tutorial:
+==================
+>Download:
+>>5GB File
+>>magnet:?xt=urn:btih:1ffae6f57118218306a2756388a09d40109ac4c9
+>>20Gb file
+>>magnet:?xt=urn:btih:784e3515f48adb02abd52d46915a89652239adc8
+>How to install:
+1 step. download yuanshen_beta_1.4.50.zip
+2 step. unzip it
+3 step. download game_1.4.50_1.4.51_diff_dr9eym8o.zip
+4 step. unzip and drop to yuanshen_beta_1.4.50 folder
+5 step. watch at the folder and unzip the win_debug.zip
+6. step. rename yuanshen.exe to yuanshen1.exe and windowsplayer.exe to yuanshen.exe
+7 step. run new yuanshen.exe
+>Note that the client sends data back to Mihoyo's servers
+>run it in a VM https://www.virtualbox.org/
+>or in a sandbox: https://sandboxie-plus.com/
+>block it from phoning home:
+https://www.howtogeek.com/227093/how-to-block-an-application-from-accessing-the-internet-with-windows-firewall/
+
+>install mitmproxy
+>go to the directory where mitmproxy is installed
+>click top left "File" and then open powershell
+>leave that window open for later
+>go to https://github.com/woltapp/mitmproxy-mock
+>click on the green button "Code" and then download as zip
+>download this file:
+>https://files.catbox.moe/6ko74l.zip
+>excract both into the folder where mitmproxy is
+>excract it in a way that all files are in the same only new subdirectory should be config
+>all files in the same location? mitmdump.exe mitmweb.exe genshin.json mydata moxy.py ?
+>open the powershell and run this command:
+>mitmdump.exe -s ./moxy.py --set mock=genshin.json
+>open internet explorer (yes, IE, not firefox, not chrome)
+>click settings icon top right
+>internet options -> Connections -> LAN settings -> 
+>check use proxy server
+>type 127.0.0.1 and port 8080
+>press OK and OK, close settings
+>type following url in IE:
+>mitm.it
+>click on windows and download the file
+>double click on file
+>Certificate Import Wizard opens
+>click next
+>click next
+>leave password empty
+>click next
+>select Place all certificates in following store:
+>Trusted Root Certificate Authorities
+>click OK, click next
+>click finish
+>now test if everything works
+>got to https://www.test.com/query_region_list with internet Explorer
+>you should see no website, but a blank white page with a very long text that starts with ElwKCjFfNF9vc2x....
+>now start genshin
+>click on test server
+>after 10 seconds or so you should see login interface
+>ignore it, just click top left white box and load a scene
+>GM interface is now accessible
+>hold left Alt to show mousecursor, this also works in normal genshin
+ 
+If you read this and are not from 4chan, you can visit us on 4channel.org/v/
+if you have any questions then make a thread there, everybody will gladly help you
+
+
+Tutorial2:
+==================
+game_1.4.50_1.4.51_diff_DR9eYm8O
+Pack1：magnet:?xt=urn:btih:1ffae6f57118218306a2756388a09d40109ac4c9&dn=game_1.4.50_1.4.51_diff_dr9eym8o.zip&tr=udp://tracker.openbittorrent.com:6969/
+
+yuanshen_beta_1.4.50
+Pack2：magnet:?xt=urn:btih:784e3515f48adb02abd52d46915a89652239adc8&dn=yuanshen_beta_1.4.50.zip&tr=udp://tracker.openbittorrent.com:6969/
+
+installation steps:
+1.Download file 2
+2.Unzip the file 2
+3.Download file 1
+4.Decompress and overwrite file 1 to the directory where file 2 is decompressed
+5.Unzip win_debug.zip
+6.Rename yuanshen.exe to yuanshen1.exe, and rename windowsplayer.exe to yuanshen.exe
+7.disconnect Internet or block it through firewall! disconnect Internet or block it through firewall! disconnect Internet or block it through firewall!
+8.Run yuanshen.exe
+
+Easy Way to enable the in-game GM menu
+1.Open Hex Editor, select <GenshinFolder>\YuanShen_Data\Native\UserAssembly.dll
+2.Find 48 8B 05 5B 9E C3 05 48 8B 88 A0 00 00 00 40 88 B1 50 01 00 00, replace with C6 81 50 01 00 00 01 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+3.Save it
+4.disconnect Internet or block it through firewall! disconnect Internet or block it through firewall! disconnect Internet or block it through firewall!
+5.Run yuanshen.exe Now you can access GM menu in offline mode
+
+How to creat NPC/monster?
+1.Press GM -> AI -> In the left top corner type the name of monster and then press Spawn
+
+Tutorial3:
+==================
+超简易启用 原神1.5 GM 菜单
+ 1 下载 https://files.catbox.moe/fkkil8.zip
+ 2 将文件提取到“ \ YuanShen_Data \ Native \ UserAssembly.dll”并覆盖
+ 3 断网 
+ 4 运行原神
