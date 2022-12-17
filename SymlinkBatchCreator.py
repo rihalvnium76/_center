@@ -18,6 +18,9 @@ def CreateSymbolLinks(symbolLinks: dict[str, str | Iterable[str]], autoCompleteS
         return os.path.join(symbolLinkPath, name) if os.path.basename(symbolLinkPath) != name else symbolLinkPath
 
     def createSymbolLink(symbolLinkPath: str, targetPath: str) -> NoReturn:
+        if os.path.exists(symbolLinkPath):
+            print(f'[-] {symbolLinkPath} -> {targetPath}')
+            return
         print(f'[>] {symbolLinkPath} -> {targetPath}')
         parentDir = os.path.dirname(symbolLinkPath)
         if not os.path.exists(parentDir):
