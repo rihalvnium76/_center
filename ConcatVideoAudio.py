@@ -28,7 +28,7 @@ def concat(outDir: str, names: list[str], videoExt = 'mp4', audioExt = 'm4a'):
         try:
             subprocess.run(cli, capture_output=True, check=True, text=True, encoding='UTF-8')
         except subprocess.CalledProcessError as e:
-            print()
+            print('[E] ffmpeg concat failed:')
             print(e.stderr)
 
 concat(r'X:\bangumi', [
