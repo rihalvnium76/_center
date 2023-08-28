@@ -3,12 +3,26 @@ var IdSet = (function () {
         this._items = {};
         this._size = 0;
     }
+
+    IdSet.from = function (o) {
+        if (o instanceof IdSet) {
+            return o.clone();
+        }
+        var ret = new IdSet();
+        if (Array.isArray(o)) {
+            ret.addAll(o);
+        } else {
+            ret.add(o);
+        }
+        return ret;
+    };
+
     IdSet.prototype = {
         constructor:  IdSet,
 
         add: function (e) {
             var k = this._keyOf(e);
-            if (!this._has(k)) {
+            if (this._accept(k) && !this._has(k)) {
                 this._store(k, e);
                 ++this._size;
                 return true;
@@ -17,7 +31,7 @@ var IdSet = (function () {
         },
         remove: function (e) {
             var k = this._keyOf(e);
-            if (this._has(k)) {
+            if (this._accept(k) && his._has(k)) {
                 this._drop(k);
                 --this._size;
                 return true;
@@ -25,7 +39,8 @@ var IdSet = (function () {
             return false;
         },
         contains: function (e) {
-            return this._has(this._keyOf(e));
+            var k = this._keyOf(e);
+            return this._accept(k) && this._has(k);
         },
         clear: function () {
             this._items = {};
@@ -37,7 +52,7 @@ var IdSet = (function () {
         isEmpty: function () {
             return !this._size;
         },
-        toList: function () {
+        toArray: function () {
             var ret = [];
             for (var k in this._items) {
                 if (this._has(k)) {
@@ -53,7 +68,11 @@ var IdSet = (function () {
                 }
             }
         },
-        
+        addAll: function (c) {
+            (c instanceof IdSet || Array.isArray(c)) && c.forEach(function (e) {
+                this.add(e);
+            }, this);
+        },
         clone: function () {
             var ret = new IdSet();
             for (var k in this._items) {
@@ -62,88 +81,80 @@ var IdSet = (function () {
             ret._size = this._size;
             return ret;
         },
-        allIn: function (e) {
-            if (!Array.isArray(e)) {
-                return this._size === 1 && this.contains(e);
+        intersect: function (c) {
+            var ret = new IdSet();
+            if (!(c instanceof IdSet || Array.isArray(c))) {
+                c = [c];
             }
-            switch (e.length) {
-                case 1: return this._size === 1 && this.contains(e[0]);
-                case 0: return this.isEmpty();
-                default:
-                    var t = this.clone();
-                    e.forEach(function (e) {
-                        t.remove(e);
-                    });
-                    return t.isEmpty();
-            }
-        },
-        allNotIn: function (e) {
-            if (!Array.isArray(e)) {
-                return !this.contains(e);
-            }
-            for (var i = 0; i < e.length; ++i) {
-                if (this.contains(e[i])) {
-                    return false;
+            c.forEach(function (e) {
+                if (this.contains(e)) {
+                    ret.add(e);
                 }
-            }
-            return true;
-        },
-        addAll: function (c) {
-            (c instanceof IdSet || Array.isArray(c)) && c.forEach(function (e) {
-                this.add(e);
             }, this);
+            return ret;
         },
-        filter: function (fn) {
+        allIn: function (c) {
+            return this.intersect(c).size() === this._size;
+        },
+        allNotIn: function (c) {
+            return this.intersect(c).size() === 0;
+        },
+        filter: function (fn, thisArg) {
             var ret = new IdSet();
             this.forEach(function (e) {
-                fn.call(this, e) && ret.add(e);
+                fn.call(thisArg || this, e) && ret.add(e);
             });
             return ret;
         },
-        map: function (fn) {
+        map: function (fn, thisArg) {
             var ret = new IdSet();
             this.forEach(function (e) {
-                ret.add(fn.call(this, e));
+                ret.add(fn.call(thisArg || this, e));
             });
             return ret;
         },
-        every: function (fn) {
+        every: function (fn, thisArg) {
             for (var k in this._items) {
-                if (this._has(k) && !fn.call(this, this._load(k))) {
+                if (this._has(k) && !fn.call(thisArg || this, this._load(k))) {
                     return false;
                 }
             }
             return true;
         },
-        some: function (fn) {
+        some: function (fn, thisArg) {
             for (var k in this._items) {
-                if (this._has(k) && fn.call(this, this._load(k))) {
+                if (this._has(k) && fn.call(thisArg || this, this._load(k))) {
                     return true;
                 }
             }
             return false;
         },
         reduce: function (fn, initialValue) {
-            var ret = initialValue, direct = arguments.length === 1;
-            this.forEach(function (e) {
-                if (direct) {
-                    ret = e;
-                    direct = false;
-                } else {
-                    ret = fn.call(this, ret, e);
+            return this.toArray().reduce(fn, initialValue);
+        },
+        equals: function (o) {
+            if (!(o instanceof IdSet && this._size === o.size())) {
+                return false;
+            }
+            for (var e in o._items) {
+                if (!this.contains(e)) {
+                    return false;
                 }
-            });
-            return ret;
+            }
+            return true;
         },
 
         // overridable low-level R/W interfaces
-        // keyOf -> accept -> has -> store / drop / load
+        // keyOf-> accept -> has -> store / drop / load
         _keyOf: function (e) {
             switch (typeof e) {
-                case "string": return "S" + e;
-                case "number": return "N" + e;
+                case "string": return "S".concat(e);
+                case "number": return "N".concat(e);
                 default: return null;
             }
+        },
+        _accept: function (k) {
+            return !!k;
         },
         _store: function (k, e) {
             this._items[k] = {value: e};
@@ -155,8 +166,9 @@ var IdSet = (function () {
             this._items[k] = void 0;
         },
         _has: function (k) {
-            return k && this._items.hasOwnProperty(k) && this._items[k] !== void 0;
+            return this._items[k] !== void 0;
         }
     };
+
     return IdSet;
 })();
