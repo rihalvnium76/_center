@@ -136,8 +136,8 @@ var IdSet = (function () {
             if (!(o instanceof IdSet && this._size === o.size())) {
                 return false;
             }
-            for (var e in o._items) {
-                if (!this.contains(e)) {
+            for (var k in this._items) {
+                if (this._has(k) && !o.contains(this._load(k))) {
                     return false;
                 }
             }
