@@ -143,16 +143,7 @@ var IdSet = (function () {
             });
         },
         toString: function () {
-            var ret = "";
-            this.forEach(function (e) {
-                if (typeof e === "string") {
-                    ret.concat('"' + String(e) + '"');
-                } else  {
-                    ret.concat(String(e));
-                }
-                ret.concat(",");
-            });
-            return ret.substring(0, ret.length - 1);
+            return JSON.stringify(this.toArray());
         },
         
         // overridable low-level R/W interfaces
@@ -182,74 +173,4 @@ var IdSet = (function () {
     };
 
     return IdSet;
-})();
-
-
-(() => {
-    const ARRAY_LENGTH = 1000000;
-    const AVG_COUNT = 100;
-    const fill = () => (Math.random()/(Math.random()/Math.random())/(Math.random()*Math.random()*Math.random())+Math.random()+Math.random()-Math.random());
-    const strArr = [...new Array(ARRAY_LENGTH)].map(() => {
-        let res = fill();
-        return Math.random() < 0.5 ? Number(Number(res)) : res.toString(36).substring(2);
-    });
-    const execute = (title, fn) => {
-        let duration = [];
-        for (let i = 0; i < AVG_COUNT; ++i) {
-            let start = performance.now();
-            fn();
-            let end = performance.now();
-            duration.push(end - start);
-        }
-        let total = duration.reduce((p, v) => p + v);
-        console.log(`${title} execution time(ms): ${total}`);
-    };
-
-    execute("string +=  substring", () => {
-        var ret = "";
-        strArr.forEach(function (e) {
-            if (typeof e === "string") {
-                ret += '"' + String(e) + '"';
-            } else  {
-                ret += String(e);
-            }
-            ret += ",";
-        });
-        return ret.substring(0, ret.length - 1);
-    });
-    execute("array join", () => {
-        var ret = [];
-        strArr.forEach(function (e) {
-            if (typeof e === "string") {
-                ret.push('"' + String(e) + '"');
-            } else  {
-                ret.push(String(e));
-            }
-        });
-        return ret.join(",");
-    });
-    execute("string concat substring", () => {
-        var ret = "";
-        strArr.forEach(function (e) {
-            if (typeof e === "string") {
-                ret.concat('"' + String(e) + '"');
-            } else  {
-                ret.concat(String(e));
-            }
-            ret.concat(",");
-        });
-        return ret.substring(0, ret.length - 1);
-    });
-    execute("new string concat substring", () => {
-        var ret = new String();
-        strArr.forEach(function (e) {
-            if (typeof e === "string") {
-                ret.concat('"' + String(e) + '"');
-            } else  {
-                ret.concat(String(e));
-            }
-            ret.concat(",");
-        });
-        return ret.substring(0, ret.length - 1);
-    });
 })();
