@@ -202,7 +202,7 @@ var IdSet = (function () {
             duration.push(end - start);
         }
         let total = duration.reduce((p, v) => p + v);
-        console.log(`${title} 执行耗时(ms): ${total}`);
+        console.log(`${title} execution time(ms): ${total}`);
     };
 
     execute("string +=  substring", () => {
