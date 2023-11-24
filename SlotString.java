@@ -7,8 +7,7 @@ import java.util.Map;
 public class SlotString {
   /**
    * 将 src 中的占位符（${}、#{}、{}）替换为 dest 中的值.<br>
-   * 默认使用 toString() 转为字符串，BigDecimal 类型的值会使用 toPlainString() 转换.<br>
-   * dest 中的 null 值会被转为 "".<br>
+   * dest 中的值默认使用 toString() 转为字符串，BigDecimal 类型的值会使用 toPlainString() 转换，null 会被转为 "".<br>
    * 支持使用 \ 转义符号为普通文字.<br>
    * 使用不支持的语法会导致非预期的解析.
    * 
@@ -20,15 +19,11 @@ public class SlotString {
     if (src == null || src.isEmpty()) {
       return src;
     }
-    Map<String, Object> dest0 = dest;
-    if (dest0 == null) {
-      dest0 = new HashMap<>(0);
-    }
     StringBuilder res = new StringBuilder();
-    StringBuilder key = null;
+    StringBuilder key = null; // initially null
     int state = 0;
     char prev = 0;
-    for (int i = 0, n = src.length(); i < n; ++i) {
+    for (int i = 0; i < src.length();) {
       char c = src.charAt(i);
       if (state == 0) {
         if (c == '#' || c == '$') {
@@ -39,8 +34,6 @@ public class SlotString {
           key = new StringBuilder();
         } else if (c == '\\') {
           state = 3;
-        } else if (c == '}') {
-          // Do nothing
         } else  {
           res.append(c);
         }
@@ -50,20 +43,23 @@ public class SlotString {
           key = new StringBuilder();
         } else {
           state = 0;
-          --i;
           res.append(prev);
+          continue;
         }
       } else if (state == 2) {
         if (c == '}') {
           state = 0;
-          Object val = dest0.get(key.toString());
+          Object val = null;
+          if (dest != null) {
+            val = dest.get(key.toString());
+          }
           if (val == null) {
             val = "";
           } else if (val instanceof BigDecimal) {
             val = ((BigDecimal) val).toPlainString();
           }
           res.append(val);
-        } else if (c=='\\') {
+        } else if (c == '\\') {
           state = 4;
         } else {
           key.append(c);
@@ -75,6 +71,7 @@ public class SlotString {
         state = 2;
         key.append(c);
       }
+      ++i;
     }
     return res.toString();
   }
