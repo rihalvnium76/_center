@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class SlotString {
   /**
-   * 将 src 中的占位符（${}、#{}、{}）替换为 dest 中的值.<br>
+   * 将 src 中的占位符（${var}、#{var}、{var}）替换为 dest 中键为 var 的值.<br>
    * dest 中的值默认使用 toString() 转为字符串，BigDecimal 类型的值会使用 toPlainString() 转换，null 会被转为 "".<br>
    * 支持使用 \ 转义符号为普通文字.<br>
    * 使用不支持的语法会导致非预期的解析.
