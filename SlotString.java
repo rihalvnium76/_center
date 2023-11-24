@@ -44,7 +44,7 @@ public class SlotString {
         } else {
           state = 0;
           res.append(prev);
-          --i; // reparse
+          --i; // re-parse
         }
       } else if (state == 2) {
         if (c == '}') {
