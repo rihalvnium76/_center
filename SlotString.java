@@ -20,7 +20,7 @@ public class SlotString {
       return src;
     }
     StringBuilder res = new StringBuilder();
-    StringBuilder key = null; // initially null
+    StringBuilder key = null; // actually non-null
     int state = 0;
     char prev = 0;
     for (int i = 0; i < src.length(); ++i) {
@@ -44,7 +44,7 @@ public class SlotString {
         } else {
           state = 0;
           res.append(prev);
-          --i;
+          --i; // reparse
         }
       } else if (state == 2) {
         if (c == '}') {
