@@ -23,7 +23,7 @@ public class SlotString {
     StringBuilder key = null; // initially null
     int state = 0;
     char prev = 0;
-    for (int i = 0; i < src.length();) {
+    for (int i = 0; i < src.length(); ++i) {
       char c = src.charAt(i);
       if (state == 0) {
         if (c == '#' || c == '$') {
@@ -44,7 +44,7 @@ public class SlotString {
         } else {
           state = 0;
           res.append(prev);
-          continue;
+          --i;
         }
       } else if (state == 2) {
         if (c == '}') {
@@ -71,7 +71,6 @@ public class SlotString {
         state = 2;
         key.append(c);
       }
-      ++i;
     }
     return res.toString();
   }
