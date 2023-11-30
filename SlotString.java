@@ -7,7 +7,7 @@ import java.util.Map;
 public class SlotString {
   /**
    * 将 src 中的占位符（${var}、#{var}、{var}）替换为 dest 中键为 var 的值.<br>
-   * dest 中的值默认使用 toString() 转为字符串，BigDecimal 类型的值会使用 toPlainString() 转换，null 会被转为 "".<br>
+   * dest 中的值默认使用 toString() 转为字符串，BigDecimal 类型的值会使用 toPlainString() 转换，null 值会被转为 "".<br>
    * 支持使用 \ 转义符号为普通文字.<br>
    * 使用不支持的语法会导致非预期的解析.
    * 
@@ -20,7 +20,7 @@ public class SlotString {
       return src;
     }
     StringBuilder res = new StringBuilder();
-    StringBuilder key = null; // actually non-null
+    StringBuilder key = new StringBuilder();
     int state = 0;
     char prev = 0;
     for (int i = 0; i < src.length(); ++i) {
@@ -31,7 +31,7 @@ public class SlotString {
           prev = c;
         } else if (c == '{') {
           state = 2;
-          key = new StringBuilder();
+          key.setLength(0);
         } else if (c == '\\') {
           state = 3;
         } else  {
@@ -40,7 +40,7 @@ public class SlotString {
       } else if (state == 1) {
         if (c == '{') {
           state = 2;
-          key = new StringBuilder();
+          key.setLength(0);
         } else {
           state = 0;
           res.append(prev);
