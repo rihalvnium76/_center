@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 public class SlotStringLite {
 
   private static final Pattern SLOT = Pattern.compile("(?<!\\{)\\{[^{}\r\n\t]*}(?!})");
+  private static final Pattern ESCAPE = Pattern.compile("(\\{\\{)|(}})");
   
   public static String format(String template, Map<String, Object> values) {
     if (template == null || template.isEmpty()) {
@@ -17,6 +18,7 @@ public class SlotStringLite {
     if (values == null) {
       values = Collections.emptyMap();
     }
+    
     Matcher matcher = SLOT.matcher(template);
     StringBuilder sb = new StringBuilder();
     while (matcher.find()) {
@@ -32,10 +34,18 @@ public class SlotStringLite {
       }
     }
     matcher.appendTail(sb);
-    return sb.toString().replace("{{", "{").replace("}}", "}");
+    
+    matcher = ESCAPE.matcher(sb.toString());
+    sb.setLength(0);
+    while (matcher.find()) {
+      matcher.appendReplacement(sb, String.valueOf(matcher.group().charAt(0)));
+    }
+    matcher.appendTail(sb);
+    
+    return sb.toString();
   }
   
   public static void main(String[] args) {
-    System.out.println(format("0 {A} {B} {C} {{D}} {{{{E}}}} {} 9", Map.of("A", "1", "B", 2, "C", new BigDecimal("1.2E+3"))));
+    System.out.println(format("0 {A} {B} {C} {{D}} {{{{E}}}} {{{{{{F}}}}}} {} 9", Map.of("A", "1", "B", 2, "C", new BigDecimal("1.2E+3"))));
   }
 }
