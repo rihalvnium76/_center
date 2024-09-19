@@ -20,7 +20,7 @@ public class SlotStringLite {
     }
     
     Matcher matcher = SLOT.matcher(template);
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder(template.length());
     while (matcher.find()) {
       String slot = matcher.group();
       String key = slot.substring(1, slot.length() - 1);
