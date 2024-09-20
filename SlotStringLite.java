@@ -1,5 +1,3 @@
-package util;
-
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
@@ -8,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class SlotStringLite {
 
-  private static final Pattern SLOT = Pattern.compile("(?<!\\{)\\{[^{}\r\n\t]*}(?!})|(\\{\\{)|(}})");
+  private static final Pattern SLOT = Pattern.compile("(?<!\\{)\\{[^{}\r\n\t]*}(?!})|\\{\\{|}}");
   
   public static String format(String template, Map<String, Object> values) {
     if (template == null || template.isEmpty()) {
