@@ -53,6 +53,8 @@ public class SlotString {
       texts.add(res.toString());
       types.add(TEXT_TYPE);
     }
+    texts.trimToSize();
+    types.trimToSize();
     res.setLength(0);
     key.setLength(0);
   }
