@@ -1,0 +1,52 @@
+IndexedTable<E extends Object|Array>
+
+struct:
+  id: NodeId uint = 0
+  
+  nodes: {[NodeId]: Node {
+    id: NodeId
+    value: E
+    prev?: Node
+    next?: Node
+  }}
+  size: uint = 0
+  head?: Node
+  tail?: Node
+  cachedArray?: Node[] = null
+
+  indexes: {[indexName: IndexName str]: {[key]: str}: NodeSet {[NodeId]: Node}}
+
+  config: {
+    index: {[IndexName]: (str|number)[]}
+  }
+
+trait:
+  constuctor(#config)
+  deepCopy(obj)
+
+  append(prevNode, value): Node
+  insert(nextNode, value): Node
+  remove(node)
+  update(node, value)
+  swap(node1, node2)
+  getIndexedNode(indexName, value): Node
+  listIndexedNodes(indexName, value): Node[]
+  getNode(nodeId): Node
+  headNode()
+  tailNode()
+  clear()
+  size()
+  isEmpty()
+  forEach(fn: (Node, this) => bool, thisArg?)
+  toArray(): Node[]
+  #nextId()
+
+  addIndex(indexName, columns): this
+  removeIndex(indexName): this
+  #getIndex(indexName, value): NodeSet
+  #setIndex(indexName, node)
+  #removeIndex(indexName, node)
+  #setIndexes(node)
+  #removeIndexes(node)
+
+// # -> internal_
