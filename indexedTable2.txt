@@ -10,19 +10,20 @@ struct:
     next?: Node
   }}
   size: uint = 0
-  head?: Node
-  tail?: Node
+  head: DummyNode {next: Node = tail}
+  tail: DummyNode {prev: Node = head}
   cachedArray?: Node[] = null
 
-  indexes: {[indexName: IndexName str]: {[key]: str}: NodeSet {[NodeId]: Node}}
+  indexes: {[indexName: IndexName str]: {[key]: str}: NodeMap {[NodeId]: Node}}
 
   config: {
-    index: {[IndexName]: (str|number)[]}
+    indexes: {[IndexName]: (str|number)[]}
   }
 
 trait:
   constuctor(#config)
-  deepCopy(obj)
+  $deepCopy(obj: T): T
+  $unmodifiableNode(node): Node
 
   append(prevNode, value): Node
   insert(nextNode, value): Node
@@ -43,10 +44,12 @@ trait:
 
   addIndex(indexName, columns): this
   removeIndex(indexName): this
-  #getIndex(indexName, value): NodeSet
+  #getIndex(indexName, value): NodeMap
   #setIndex(indexName, node)
   #removeIndex(indexName, node)
   #setIndexes(node)
   #removeIndexes(node)
 
-// # -> internal_
+// # private -> internal_
+// $ static
+// _ member field
