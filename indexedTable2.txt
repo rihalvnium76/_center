@@ -6,12 +6,12 @@ struct:
   nodes: {[NodeId]: Node {
     id: NodeId
     value: E
-    prev?: Node
-    next?: Node
+    prev: () => Node?
+    next: () => Node?
   }}
   size: uint = 0
-  head: DummyNode {next: Node = tail}
-  tail: DummyNode {prev: Node = head}
+  head: DummyNode {next: () => tail}
+  tail: DummyNode {prev: () => head}
   cachedArray?: Node[] = null
 
   indexes: {[indexName: IndexName str]: {[key]: str}: NodeMap {[NodeId]: Node}}
