@@ -21,15 +21,14 @@ struct:
   }
 
 trait:
-  constuctor(#initialized?)
-  #init()
+  constuctor(#config?)
   $deepCopy(obj: T): T
-  $unmodifiableNode(node): UnmodifiableNode {
-    id: NodeId
-    value = get () => (this.cachedValue ? this.cachedValue : (this.cachedValue = $deepCopy(node.value)))
-    prev = get () => $unmodifiableNode(node.prev)
-    next = get () => $unmodifiableNode(node.next)
-  }
+  // $unmodifiableNode(node): UnmodifiableNode {
+  //   id: NodeId
+  //   value = get () => (this.cachedValue ? this.cachedValue : (this.cachedValue = $deepCopy(node.value)))
+  //   prev = get () => $unmodifiableNode(node.prev)
+  //   next = get () => $unmodifiableNode(node.next)
+  // }
 
   append(prevNode, value): Node
   insert(nextNode, value): Node
@@ -52,9 +51,9 @@ trait:
   removeIndex(indexName): this
   #getIndex(indexName, value): Index
   #setIndex(indexName, node)
-  #removeIndex(indexName, node)
+  #clearIndex(indexName, node)
   #setIndexes(node)
-  #removeIndexes(node)
+  #clearIndexes(node)
 
 // # private -> internal_
 // $ static
