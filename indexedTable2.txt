@@ -6,24 +6,30 @@ struct:
   nodes: {[NodeId]: Node {
     id: NodeId
     value: E
-    prev: () => Node?
-    next: () => Node?
+    prev?: Node
+    next?: Node
   }}
   size: uint = 0
-  head: DummyNode {next: () => tail}
-  tail: DummyNode {prev: () => head}
+  head: DummyNode {next: tail}
+  tail: DummyNode {prev: head}
   cachedArray?: Node[] = null
 
-  indexes: {[indexName: IndexName str]: {[key]: str}: NodeMap {[NodeId]: Node}}
+  indexes: {[indexName: IndexName str]: {[key]: str}: Index {[NodeId]: Node}}
 
   config: {
     indexes: {[IndexName]: (str|number)[]}
   }
 
 trait:
-  constuctor(#config)
+  constuctor(#initialized?)
+  #init()
   $deepCopy(obj: T): T
-  $unmodifiableNode(node): Node
+  $unmodifiableNode(node): UnmodifiableNode {
+    id: NodeId
+    value = get () => (this.cachedValue ? this.cachedValue : (this.cachedValue = $deepCopy(node.value)))
+    prev = get () => $unmodifiableNode(node.prev)
+    next = get () => $unmodifiableNode(node.next)
+  }
 
   append(prevNode, value): Node
   insert(nextNode, value): Node
@@ -44,7 +50,7 @@ trait:
 
   addIndex(indexName, columns): this
   removeIndex(indexName): this
-  #getIndex(indexName, value): NodeMap
+  #getIndex(indexName, value): Index
   #setIndex(indexName, node)
   #removeIndex(indexName, node)
   #setIndexes(node)
