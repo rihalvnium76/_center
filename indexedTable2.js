@@ -25,6 +25,12 @@ var IndexedTable = (function () {
           }
           return op;
         },
+        peek: function (fn) {
+          if (value != null) {
+            fn(value);
+          }
+          return op;
+        },
         val: function (defaultValue) {
           if (value != null) {
             return value;
