@@ -1,23 +1,38 @@
 var IndexedTable = (function () {
   "use strict";
   var util = {
-    option: function (obj, defaultValue) {
-      return function Option(field) {
-        if (field == null) {
-          if (obj == null) {
-            return defaultValue;
+    Optional: function (value) {
+      var op = {
+        map: function (f) {
+          if (value != null && f != null) {
+            if (typeof f === "function") {
+              value = f(value);
+            } else {
+              value = value[f];
+            }
           }
-          return obj;
-        }
-        if (obj != null) {
-          if (typeof field === "function") {
-            obj = field(obj);
-          } else {
-            obj = obj[field];
+          return op;
+        },
+        filter: function (fn) {
+          if (value != null && !fn(value)) {
+            value = null;
           }
+          return op;
+        },
+        flat: function () {
+          if (value != null && typeof value.val === "function") {
+            value = value.val();
+          }
+          return op;
+        },
+        val: function (defaultValue) {
+          if (value != null) {
+            return value;
+          }
+          return defaultValue;
         }
-        return Option;
-      }
+      };
+      return op;
     }
   };
 
