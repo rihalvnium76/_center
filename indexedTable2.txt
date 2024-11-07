@@ -48,7 +48,7 @@ trait:
   #nextId()
 
   addIndex(indexName, columns): this
-  removeIndex(indexName): this
+  dropIndex(indexName): this
   #getIndex(indexName, value): Index
   #setIndex(indexName, node)
   #clearIndex(indexName, node)
