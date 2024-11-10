@@ -1,7 +1,7 @@
 IndexedTable<E extends Object|Array>
 
 struct:
-  id: NodeId uint = 0
+  id: NodeId uint = 2
   
   nodes: {[NodeId]: Node {
     id: NodeId
@@ -10,8 +10,8 @@ struct:
     next?: Node
   }}
   size: uint = 0
-  head: DummyNode {next: tail}
-  tail: DummyNode {prev: head}
+  head: DummyNode {id: 0, next: tail}
+  tail: DummyNode {id: 1, prev: head}
   cachedArray?: Node[] = null
 
   indexes: {[indexName: IndexName str]: {[key]: str}: Index {[NodeId]: Node}}
@@ -22,19 +22,15 @@ struct:
 
 trait:
   constuctor(#config?)
-  $deepCopy(obj: T): T
-  // $unmodifiableNode(node): UnmodifiableNode {
-  //   id: NodeId
-  //   value = get () => (this.cachedValue ? this.cachedValue : (this.cachedValue = $deepCopy(node.value)))
-  //   prev = get () => $unmodifiableNode(node.prev)
-  //   next = get () => $unmodifiableNode(node.next)
-  // }
+  $deepCopy(obj: E): E
 
   append(prevNode, value): Node
   insert(nextNode, value): Node
-  remove(node)
-  update(node, value)
-  swap(node1, node2)
+  remove(node): E? = oldValue
+  update(node, value): E? = oldValue
+  swap(node1, node2): bool
+  moveUp(node): bool
+  moveDown(node): bool
   getIndexedNode(indexName, value): Node
   listIndexedNodes(indexName, value): Node[]
   getNode(nodeId): Node
