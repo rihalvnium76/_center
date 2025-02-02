@@ -18,6 +18,7 @@ set i=0
 for /r "%target%" %%a in (*.exe) do (
   set id=%prefix%!i!
   echo [^>] !id! : %%a
+  netsh advfirewall firewall add rule action=block dir=in name="!id!" program="%%a" protocol=any
   netsh advfirewall firewall add rule action=block dir=out name="!id!" program="%%a" protocol=any
   set /a i+=1
 )
