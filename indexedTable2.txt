@@ -1,55 +1,66 @@
 IndexedTable<E extends Object|Array>
 
 struct:
-  id: NodeId uint = 2
-  
-  nodes: {[NodeId]: Node {
-    id: NodeId
-    value: E
-    prev?: Node
-    next?: Node
-  }}
-  size: uint = 0
-  head: DummyNode {id: 0, next: tail}
-  tail: DummyNode {id: 1, prev: head}
-  cachedArray?: Node[] = null
-
-  indexes: {[indexName: IndexName str]: {[key]: str}: Index {[NodeId]: Node}}
-
-  config: {
-    indexes: {[IndexName]: (str|number)[]}
-  }
+  data: 
+    nodes: 
+      [nodeId]: Node
+        id?: NodeId
+        value?: E
+        prev?: Node
+        next?: Node
+        prevId?: NodeId
+        nextId?: NodeId
+    nextId: uint = 0
+    size: uint = 0
+    head?: Node
+    tail?: Node
+    cachedValues?: E[]
+  indexes:
+    [indexName]:
+      [key]:
+        [nodeId]: Node
+  defs:
+    indexes:
+      [indexName]: ColumnName[]
 
 trait:
-  constuctor(#config?)
-  $deepCopy(obj: E): E
+  construct({defs, values})
+  $deepCopy(value: E): E
 
-  append(prevNode, value): Node
-  insert(nextNode, value): Node
-  remove(node): E? = oldValue
-  update(node, value): E? = oldValue
-  swap(node1, node2): bool
-  moveUp(node): bool
-  moveDown(node): bool
-  getIndexedNode(indexName, value): Node
-  listIndexedNodes(indexName, value): Node[]
-  getNode(nodeId): Node
-  headNode()
-  tailNode()
-  clear()
-  size()
-  isEmpty()
-  forEach(fn: (Node, this) => bool, thisArg?)
-  toArray(): Node[]
-  #nextId()
+  // wrap: Node {id, value, prev, next} -> Node {id, (value), prevId, nextId}
+  // unwrap: node Node {id, (value), prevId, nextId} -> data.nodes[node.id]
+  #wrap(node): Node
 
-  addIndex(indexName, columns): this
-  dropIndex(indexName): this
-  #getIndex(indexName, value): Index
-  #setIndex(indexName, node)
-  #clearIndex(indexName, node)
-  #setIndexes(node)
-  #clearIndexes(node)
+  data:
+    append(prevNode, value): Node
+    insert(nextNode, value): Node
+    remove(node): E?
+    update(node, value): E?
+    swap(node1, node2)
+    moveUp(node): bool
+    moveDown(node): bool
+    get(nodeId): Node?
+    get(indexName, value): Node?
+    list(nodeId): Node[]
+    list(indexName, value): Node[]
+    first(): Node?
+    last(): Node?
+    clear()
+    size(): uint
+    isEmpty(): bool
+    forEach(fn: (value, nodeId, node) => bool, thisArg?)
+    toArray(): E[]
+
+    #nextId(): NodeId
+
+  indexes:
+    add(indexName, columns): this
+    drop(indexName)
+    #list(indexName, value): {[nodeId]: Node}
+    #set(indexName, node)
+    #clear(indexName, node)
+    #setAll(node)
+    #clearAll(node)
 
 // # private -> internal_
 // $ static
