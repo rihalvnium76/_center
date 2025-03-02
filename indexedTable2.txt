@@ -17,15 +17,20 @@ struct:
     cachedValues?: E[]
   indexes:
     [indexName]:
-      [key]:
+      // "V" + key : values to index key
+      // "L" : last
+      ["V" + key | "L"]:
         [nodeId]: Node
   defs:
     indexes:
       [indexName]: ColumnName[]
+    deepCopy(value: E): E
+    toIndexKey(value: E): string|number
 
 trait:
   construct({defs, values})
-  $deepCopy(value: E): E
+  #initDefs(defs)
+  #initValues(values)
 
   // wrap: Node {id, value, prev, next} -> Node {id, (value), prevId, nextId}
   // unwrap: node Node {id, (value), prevId, nextId} -> data.nodes[node.id]
