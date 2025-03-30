@@ -4,10 +4,8 @@ var chainCall = (function (fieldCache) {
     if (obj == null) {
       return nullValue;
     }
-    var fields;
-    if (Array.isArray(path)) {
-      fields = path;
-    } else {
+    var fields = path;
+    if (!Array.isArray(path)) {
       path = String(path || "");
       if (!path) {
         return obj;
@@ -21,7 +19,16 @@ var chainCall = (function (fieldCache) {
     }
     for (var i = 0; i < fields.length; ++i) {
       var last = obj;
-      obj = obj[fields[i]];
+      var field = fields[i];
+      if (Array.isArray(field)) {
+        obj = null;
+        if (typeof last === "function") {
+          // actually this is the last of `last`
+          obj = last.apply(null, field);
+        }
+      } else {
+        obj = obj[field];
+      }
       if (obj == null) {
         return nullValue;
       }
