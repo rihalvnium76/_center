@@ -20,9 +20,13 @@ var chainCall = (function (fieldCache) {
       }
     }
     for (var i = 0; i < fields.length; ++i) {
+      var last = obj;
       obj = obj[fields[i]];
       if (obj == null) {
         return nullValue;
+      }
+      if (typeof obj === "function") {
+        obj = obj.bind(last);
       }
     }
     return obj;
