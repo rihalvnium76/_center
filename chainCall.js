@@ -1,15 +1,18 @@
 // Optional chaining polyfill
 var chainCall = (function (fieldCache) {
-  return function (obj, path, nullValue, separator) {
+  return function (obj, path, nullDefault, computed, separator) {
     if (obj == null) {
-      return nullValue;
+      if (typeof nullDefault === "function" && computed) {
+        return nullDefault();
+      }
+      return nullDefault;
     }
     var fields = path;
     if (!Array.isArray(path)) {
-      path = String(path || "");
-      if (!path) {
+      if (path == null) {
         return obj;
       }
+      path = String(path);
       separator = separator || ".";
       var key = String(separator.length) + separator + path;
       fields = fieldCache[key];
@@ -17,25 +20,27 @@ var chainCall = (function (fieldCache) {
         fields = fieldCache[key] = path.split(separator);
       }
     }
+    var v1, v2, v3 = obj;
     for (var i = 0; i < fields.length; ++i) {
-      var last = obj;
-      var field = fields[i];
-      if (Array.isArray(field)) {
-        obj = null;
-        if (typeof last === "function") {
-          // actually this is the last of `last`
-          obj = last.apply(null, field);
+      v1 = v2;
+      v2 = v3;
+      v3 = fields[i];
+      if (Array.isArray(v3)) {
+        if (typeof v2 === "function") {
+          v3 = v2.apply(v1, v3);
+        } else {
+          v3 = null;
         }
       } else {
-        obj = obj[field];
+        v3 = v2[v3];
       }
-      if (obj == null) {
-        return nullValue;
-      }
-      if (typeof obj === "function") {
-        obj = obj.bind(last);
+      if (v3 == null) {
+        if (typeof nullDefault === "function" && computed) {
+          return nullDefault();
+        }
+        return nullDefault;
       }
     }
-    return obj;
+    return v3;
   };
 })({});
