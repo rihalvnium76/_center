@@ -1,11 +1,11 @@
 // Optional chaining polyfill
 var chainCall = (function (fieldCache) {
-  return function (obj, path, nullDefault, computed, separator) {
+  return function (obj, path, nullValue, computed, separator, bound) {
     if (obj == null) {
-      if (typeof nullDefault === "function" && computed) {
-        return nullDefault();
+      if (typeof nullValue === "function" && computed) {
+        return nullValue();
       }
-      return nullDefault;
+      return nullValue;
     }
     var fields = path;
     if (!Array.isArray(path)) {
@@ -35,11 +35,14 @@ var chainCall = (function (fieldCache) {
         v3 = v2[v3];
       }
       if (v3 == null) {
-        if (typeof nullDefault === "function" && computed) {
-          return nullDefault();
+        if (typeof nullValue === "function" && computed) {
+          return nullValue();
         }
-        return nullDefault;
+        return nullValue;
       }
+    }
+    if (typeof v3 === "function" && bound) {
+      return v3.bind(v2);
     }
     return v3;
   };
