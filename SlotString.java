@@ -4,37 +4,32 @@ import java.util.Collections;
 import java.util.Map;
 
 public class SlotString {
-  private static final Integer TEXT_TYPE = 0;
-  private static final Integer KEY_TYPE = 1;
-  
+  private static final Object TEXT_TYPE = new Object();
+  private static final Object KEY_TYPE = new Object();
+
   private final StringBuilder res = new StringBuilder();
   private final StringBuilder key = new StringBuilder();
   private final ArrayList<String> texts;
-  private final ArrayList<Integer> types;
-  
+  private final ArrayList<Object> types;
+
   public SlotString() {
     texts = null;
     types = null;
   }
   public SlotString(String pattern) {
-    if (pattern == null) {
+    if (pattern == null || pattern.isEmpty()) {
       texts = null;
       types = null;
-      return;
+    } else {
+      texts = new ArrayList<>();
+      types = new ArrayList<>();
+      compile(pattern);
     }
-    if (pattern.isEmpty()) {
-      texts = new ArrayList<>(Collections.singletonList(""));
-      types = new ArrayList<>(Collections.singletonList(TEXT_TYPE));
-      return;
-    }
-    texts = new ArrayList<>();
-    types = new ArrayList<>();
-    compile(pattern);
   }
-  
+
   public String qformat(String pattern, Map<String, Object> vars) {
     if (pattern == null || pattern.isEmpty()) {
-      return pattern;
+      return "";
     }
     if (vars == null) {
       parse(pattern, Collections.emptyMap());
@@ -46,30 +41,30 @@ public class SlotString {
     key.setLength(0);
     return ret;
   }
-  
+
   private void compile(String pattern) {
     parse(pattern, null);
     if (res.length() != 0) {
       texts.add(res.toString());
       types.add(TEXT_TYPE);
     }
-    texts.trimToSize();
-    types.trimToSize();
     res.setLength(0);
     key.setLength(0);
+    texts.trimToSize();
+    types.trimToSize();
   }
-  
+
   public String format(Map<String, Object> vars) {
-    if (types == null) {
-      return null;
+    if (types == null || types.isEmpty()) {
+      return "";
     }
     for (int i = 0; i < types.size(); ++i) {
-      Integer type = types.get(i);
+      Object type = types.get(i);
       String text = texts.get(i);
       if (type == TEXT_TYPE) {
         res.append(text);
       } else if (type == KEY_TYPE) {
-        String val = asString(text, vars);
+        String val = asString(vars, text);
         if (val != null && !val.isEmpty()) {
           res.append(val);
         }
@@ -79,7 +74,7 @@ public class SlotString {
     res.setLength(0);
     return ret;
   }
-  
+
   private void parse(String pattern, Map<String, Object> vars) {
     int state = 0;
     for (int i = 0; i < pattern.length(); ++i) {
@@ -109,15 +104,15 @@ public class SlotString {
       }
     }
   }
-  
+
   private void parseQformat(Map<String, Object> vars) {
-    String val = asString(key.toString(), vars);
+    String val = asString(vars, key.toString());
     if (val != null && !val.isEmpty()) {
       res.append(val);
     }
     key.setLength(0);
   }
-  
+
   private void parseCompile() {
     if (res.length() != 0) {
       texts.add(res.toString());
@@ -128,8 +123,8 @@ public class SlotString {
     types.add(KEY_TYPE);
     key.setLength(0);
   }
-  
-  protected String asString(String key, Map<String, Object> vars) {
+
+  protected String asString(Map<String, Object> vars, String key) {
     Object val = vars.get(key);
     if (val == null) {
       return "";
