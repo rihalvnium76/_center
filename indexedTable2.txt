@@ -42,8 +42,8 @@ trait:
     remove(node): E?
     update(node, value): E?
     swap(node1, node2)
-    moveUp(node): bool
-    moveDown(node): bool
+    movePrev(node): bool
+    moveNext(node): bool
     get(nodeId): Node?
     get(indexName, value): Node?
     list(nodeId): Node[]
@@ -55,6 +55,7 @@ trait:
     isEmpty(): bool
     forEach(fn: (value, nodeId, node) => bool, thisArg?)
     toArray(): E[]
+    #clearCache()
 
     #nextId(): NodeId
 
