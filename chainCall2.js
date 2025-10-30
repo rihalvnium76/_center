@@ -2,17 +2,17 @@
 var chainCall2 = (function () {
   "use strict";
   var fieldsCache = {};
-  function popBuffer(buffer, fields, allowEmpty, parsers) {
+  function popBuffer(buffer, fields, allowEmpty, getters) {
     if (buffer.length || allowEmpty) {
       var field = buffer.join("");
-      if (parsers) {
-        field = parsers[field] || field;
+      if (getters) {
+        field = getters[field] || field;
       }
       fields.push(field);
       buffer.length = 0;
     }
   }
-  function parsePath(path, parsers) {
+  function parsePath(path, getters) {
     var state = 0, stateArgs = [];
     var fields = [], buffer = [];
     for (var i = 0; i < path.length; ++i) {
@@ -45,7 +45,7 @@ var chainCall2 = (function () {
           state = 0;
           stateArgs.pop();
           if (c === ")") {
-            popBuffer(buffer, fields, true, parsers);
+            popBuffer(buffer, fields, true, getters);
           } else {
             popBuffer(buffer, fields, true);
           }
@@ -56,7 +56,7 @@ var chainCall2 = (function () {
     }
     if (buffer.length) {
       if (stateArgs[stateArgs.length - 1] === ")") {
-        popBuffer(buffer, fields, false, parsers);
+        popBuffer(buffer, fields, false, getters);
       } else {
         popBuffer(buffer, fields, false);
       }
@@ -69,7 +69,7 @@ var chainCall2 = (function () {
     }
     return defaultValue;
   }
-  return function (obj, path, defaultValue, parsers) {
+  return function (obj, path, defaultValue, getters) {
     if (obj == null) {
       return getDefaultValue(defaultValue);
     }
@@ -80,7 +80,7 @@ var chainCall2 = (function () {
     if (typeof path === "string") {
       fields = fieldsCache[path];
       if (!fields) {
-        fieldsCache[path] = fields = parsePath(path, parsers);
+        fieldsCache[path] = fields = parsePath(path, getters);
       }
     }
     if (!Array.isArray(fields)) {
@@ -90,7 +90,7 @@ var chainCall2 = (function () {
     for (var i = 0; i < fields.length; ++i) {
       v1 = v2, v2 = v3, v3 = fields[i];
       if (typeof v3 === "function") {
-        v3 = v3(v1, v2);
+        v3 = v3(v1, v2, i);
       } else {
         v3 = v2[v3];
       }
