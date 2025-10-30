@@ -22,15 +22,15 @@ var chainCall2 = (function () {
           state = 1;
           stateArgs.push(0);
         } else if (c === ".") {
-          popBuffer(buffer, fields);
+          popBuffer(buffer, fields, false);
         } else if (c === "[") {
           state = 2;
           stateArgs.push("]");
-          popBuffer(buffer, fields);
+          popBuffer(buffer, fields, false);
         } else if (c === "(") {
           state = 2;
           stateArgs.push(")");
-          popBuffer(buffer, fields);
+          popBuffer(buffer, fields, false);
         } else {
           buffer.push(c);
         }
@@ -56,9 +56,9 @@ var chainCall2 = (function () {
     }
     if (buffer.length) {
       if (stateArgs[stateArgs.length - 1] === ")") {
-        popBuffer(buffer, fields, parsers);
+        popBuffer(buffer, fields, false, parsers);
       } else {
-        popBuffer(buffer, fields);
+        popBuffer(buffer, fields, false);
       }
     }
     return fields;
