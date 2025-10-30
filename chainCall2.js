@@ -63,9 +63,15 @@ var chainCall2 = (function () {
     }
     return fields;
   }
+  function getDefaultValue(defaultValue) {
+    if (typeof defaultValue === "function") {
+      return defaultValue();
+    }
+    return defaultValue;
+  }
   return function (obj, path, defaultValue, parsers) {
     if (obj == null) {
-      return defaultValue;
+      return getDefaultValue(defaultValue);
     }
     if (path == null) {
       return obj;
@@ -89,7 +95,7 @@ var chainCall2 = (function () {
         v3 = v2[v3];
       }
       if (v3 == null) {
-        return defaultValue;
+        return getDefaultValue(defaultValue);
       }
     }
     return v3;
