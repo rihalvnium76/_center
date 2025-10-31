@@ -16,49 +16,50 @@ var chainCall2 = (function () {
   }
   function parseIntermediatePath(path) {
     var state = 0;
-    const stack = [];
     const context = {
       tokens: [],
       types: [],
       buffer: [],
       computed: true,
     };
+    var returnValue, endChar;
     for (var i = 0; i < path.length; ++i) {
       const c = path.charAt(i);
       if (state === 0) {
         if (c == "\\") {
           state = 1;
-          stack.push(0);
+          returnValue = 0;
         } else if (c === ".") {
           popBuffer(context, TEXT_TYPE, false);
         } else if (c === "[") {
           state = 2;
-          stack.push("]");
+          endChar = "]";
           popBuffer(context, TEXT_TYPE, false);
         } else if (c === "(") {
           state = 2;
-          stack.push(")");
+          endChar = ")";
           popBuffer(context, TEXT_TYPE, false);
         } else {
           context.buffer.push(c);
         }
       } else if (state === 1) {
-        state = stack.pop();
+        state = returnValue;
+        returnValue = null;
         context.buffer.push(c);
       } else if (state === 2) {
         if (c === "\\") {
           state = 1;
-          stack.push(2);
-        } else if (c === stack[stack.length - 1]) {
+          returnValue = 2;
+        } else if (c === endChar) {
           state = 0;
-          stack.pop();
+          endChar = null;
           popBuffer(context, (c === ")" ? GETTER_TYPE : TEXT_TYPE), true);
         } else {
           context.buffer.push(c);
         }
       }
     }
-    popBuffer(context, (stack[stack.length - 1] === ")" ? GETTER_TYPE : TEXT_TYPE), false);
+    popBuffer(context, (endChar === ")" ? GETTER_TYPE : TEXT_TYPE), false);
     // exporting buffer can cause a memory leak
     if (context.computed) {
       return {tokens: context.tokens};
