@@ -16,7 +16,7 @@ var chainCall2 = (function () {
   }
   function parseIntermediatePath(path) {
     var state = 0;
-    const stateArgs = [];
+    const stack = [];
     const context = {
       tokens: [],
       types: [],
@@ -28,37 +28,37 @@ var chainCall2 = (function () {
       if (state === 0) {
         if (c == "\\") {
           state = 1;
-          stateArgs.push(0);
+          stack.push(0);
         } else if (c === ".") {
           popBuffer(context, TEXT_TYPE, false);
         } else if (c === "[") {
           state = 2;
-          stateArgs.push("]");
+          stack.push("]");
           popBuffer(context, TEXT_TYPE, false);
         } else if (c === "(") {
           state = 2;
-          stateArgs.push(")");
+          stack.push(")");
           popBuffer(context, TEXT_TYPE, false);
         } else {
           context.buffer.push(c);
         }
       } else if (state === 1) {
-        state = stateArgs.pop();
+        state = stack.pop();
         context.buffer.push(c);
       } else if (state === 2) {
         if (c === "\\") {
           state = 1;
-          stateArgs.push(2);
-        } else if (c === stateArgs[stateArgs.length - 1]) {
+          stack.push(2);
+        } else if (c === stack[stack.length - 1]) {
           state = 0;
-          stateArgs.pop();
+          stack.pop();
           popBuffer(context, (c === ")" ? GETTER_TYPE : TEXT_TYPE), true);
         } else {
           context.buffer.push(c);
         }
       }
     }
-    popBuffer(context, (stateArgs[stateArgs.length - 1] === ")" ? GETTER_TYPE : TEXT_TYPE), false);
+    popBuffer(context, (stack[stack.length - 1] === ")" ? GETTER_TYPE : TEXT_TYPE), false);
     // exporting buffer can cause a memory leak
     if (context.computed) {
       return {tokens: context.tokens};
@@ -77,18 +77,9 @@ var chainCall2 = (function () {
       return token;
     });
   }
-  function getDefaultValue(defaultValue) {
-    if (typeof defaultValue === "function") {
-      return defaultValue();
-    }
-    return defaultValue;
-  }
   return function (obj, path, defaultValue, getters) {
     if (obj == null) {
-      return getDefaultValue(defaultValue);
-    }
-    if (path == null) {
-      return obj;
+      return typeof defaultValue === "function" ? defaultValue() : defaultValue;
     }
     var fields = path;
     if (typeof path === "string") {
@@ -106,12 +97,12 @@ var chainCall2 = (function () {
     for (var i = 0; i < fields.length; ++i) {
       v1 = v2, v2 = v3, v3 = fields[i];
       if (typeof v3 === "function") {
-        v3 = v3(v1, v2, i);
+        v3 = v3(v1, v2, i, v3);
       } else {
         v3 = v2[v3];
       }
       if (v3 == null) {
-        return getDefaultValue(defaultValue);
+        return typeof defaultValue === "function" ? defaultValue() : defaultValue;
       }
     }
     return v3;
