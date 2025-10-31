@@ -1,42 +1,50 @@
 // Optional chaining polyfill and enhancement
 var chainCall2 = (function () {
   "use strict";
-  var fieldsCache = {};
-  function popBuffer(buffer, fields, allowEmpty, getters) {
-    if (buffer.length || allowEmpty) {
-      var field = buffer.join("");
-      if (getters) {
-        field = getters[field] || field;
-      }
-      fields.push(field);
-      buffer.length = 0;
+  const fieldsCache = {};
+  const TEXT_TYPE = 0, GETTER_TYPE = 1;
+  function popBuffer(context, type, allowEmpty) {
+    if (!(context.buffer.length || allowEmpty)) {
+      return;
+    }
+    context.tokens.push(context.buffer.join(""));
+    context.types.push(type);
+    context.buffer.length = 0;
+    if (type === GETTER_TYPE) {
+      context.computed = false;
     }
   }
-  function parsePath(path, getters) {
-    var state = 0, stateArgs = [];
-    var fields = [], buffer = [];
+  function parseIntermediatePath(path) {
+    var state = 0;
+    const stateArgs = [];
+    const context = {
+      tokens: [],
+      types: [],
+      buffer: [],
+      computed: true,
+    };
     for (var i = 0; i < path.length; ++i) {
-      var c = path.charAt(i);
+      const c = path.charAt(i);
       if (state === 0) {
         if (c == "\\") {
           state = 1;
           stateArgs.push(0);
         } else if (c === ".") {
-          popBuffer(buffer, fields, false);
+          popBuffer(context, TEXT_TYPE, false);
         } else if (c === "[") {
           state = 2;
           stateArgs.push("]");
-          popBuffer(buffer, fields, false);
+          popBuffer(context, TEXT_TYPE, false);
         } else if (c === "(") {
           state = 2;
           stateArgs.push(")");
-          popBuffer(buffer, fields, false);
+          popBuffer(context, TEXT_TYPE, false);
         } else {
-          buffer.push(c);
+          context.buffer.push(c);
         }
       } else if (state === 1) {
         state = stateArgs.pop();
-        buffer.push(c);
+        context.buffer.push(c);
       } else if (state === 2) {
         if (c === "\\") {
           state = 1;
@@ -44,24 +52,30 @@ var chainCall2 = (function () {
         } else if (c === stateArgs[stateArgs.length - 1]) {
           state = 0;
           stateArgs.pop();
-          if (c === ")") {
-            popBuffer(buffer, fields, true, getters);
-          } else {
-            popBuffer(buffer, fields, true);
-          }
+          popBuffer(context, (c === ")" ? GETTER_TYPE : TEXT_TYPE), true);
         } else {
-          buffer.push(c);
+          context.buffer.push(c);
         }
       }
     }
-    if (buffer.length) {
-      if (stateArgs[stateArgs.length - 1] === ")") {
-        popBuffer(buffer, fields, false, getters);
-      } else {
-        popBuffer(buffer, fields, false);
-      }
+    popBuffer(context, (stateArgs[stateArgs.length - 1] === ")" ? GETTER_TYPE : TEXT_TYPE), false);
+    // exporting buffer can cause a memory leak
+    if (context.computed) {
+      return {tokens: context.tokens};
     }
-    return fields;
+    return {tokens: context.tokens, types: context.types};
+  }
+  function parsePath(intermediate, getters) {
+    if (!intermediate.types) {
+      return intermediate.tokens;
+    }
+    return intermediate.types.map(function (type, i) {
+      const token = intermediate.tokens[i];
+      if (type === GETTER_TYPE && getters[token] != null) {
+        return getters[token];
+      }
+      return token;
+    });
   }
   function getDefaultValue(defaultValue) {
     if (typeof defaultValue === "function") {
@@ -80,8 +94,10 @@ var chainCall2 = (function () {
     if (typeof path === "string") {
       fields = fieldsCache[path];
       if (!fields) {
-        fieldsCache[path] = fields = parsePath(path, getters);
+        fieldsCache[path] = fields = parseIntermediatePath(path);
       }
+      // non-cachable
+      fields = parsePath(fields, getters);
     }
     if (!Array.isArray(fields)) {
       return obj;
