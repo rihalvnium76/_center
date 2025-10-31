@@ -56,8 +56,6 @@ var chainCall2 = (function () {
         } else {
           context.buffer.push(c);
         }
-      } else if (state === 3) {
-        //
       }
     }
     popBuffer(context, (endBracket === ")" ? GETTER_TYPE : TEXT_TYPE), false);
