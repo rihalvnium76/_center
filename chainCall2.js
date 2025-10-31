@@ -22,44 +22,45 @@ var chainCall2 = (function () {
       buffer: [],
       computed: true,
     };
-    var returnValue, endChar;
+    var returnState, endBracket;
     for (var i = 0; i < path.length; ++i) {
       const c = path.charAt(i);
       if (state === 0) {
         if (c == "\\") {
           state = 1;
-          returnValue = 0;
+          returnState = 0;
         } else if (c === ".") {
           popBuffer(context, TEXT_TYPE, false);
         } else if (c === "[") {
           state = 2;
-          endChar = "]";
+          endBracket = "]";
           popBuffer(context, TEXT_TYPE, false);
         } else if (c === "(") {
           state = 2;
-          endChar = ")";
+          endBracket = ")";
           popBuffer(context, TEXT_TYPE, false);
         } else {
           context.buffer.push(c);
         }
       } else if (state === 1) {
-        state = returnValue;
-        returnValue = null;
+        state = returnState;
         context.buffer.push(c);
       } else if (state === 2) {
         if (c === "\\") {
           state = 1;
-          returnValue = 2;
-        } else if (c === endChar) {
+          returnState = 2;
+        } else if (c === endBracket) {
           state = 0;
-          endChar = null;
+          endBracket = null;
           popBuffer(context, (c === ")" ? GETTER_TYPE : TEXT_TYPE), true);
         } else {
           context.buffer.push(c);
         }
+      } else if (state === 3) {
+        //
       }
     }
-    popBuffer(context, (endChar === ")" ? GETTER_TYPE : TEXT_TYPE), false);
+    popBuffer(context, (endBracket === ")" ? GETTER_TYPE : TEXT_TYPE), false);
     // exporting buffer can cause a memory leak
     if (context.computed) {
       return {tokens: context.tokens};
