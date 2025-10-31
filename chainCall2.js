@@ -21,8 +21,9 @@ var chainCall2 = (function () {
       types: [],
       buffer: [],
       computed: true,
+      quotes: 0,
     };
-    var returnState, endBracket;
+    var returnState, endBracket, quotes;
     for (var i = 0; i < path.length; ++i) {
       const c = path.charAt(i);
       if (state === 0) {
@@ -34,10 +35,12 @@ var chainCall2 = (function () {
         } else if (c === "[") {
           state = 2;
           endBracket = "]";
+          quotes = 0;
           popBuffer(context, TEXT_TYPE, false);
         } else if (c === "(") {
           state = 2;
           endBracket = ")";
+          quotes = 0;
           popBuffer(context, TEXT_TYPE, false);
         } else {
           context.buffer.push(c);
@@ -52,8 +55,16 @@ var chainCall2 = (function () {
         } else if (c === endBracket) {
           state = 0;
           endBracket = null;
+          const buffer = context.buffer;
+          if (quotes === 2 && buffer[0] === buffer[buffer.length - 1] && (buffer[0] === '"' || buffer[0] === "'")) {
+            buffer.pop();
+            buffer.shift();
+          }
           popBuffer(context, (c === ")" ? GETTER_TYPE : TEXT_TYPE), true);
         } else {
+          if (c === '"' || c === "'") {
+            ++quotes;
+          }
           context.buffer.push(c);
         }
       }
