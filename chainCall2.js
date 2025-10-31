@@ -10,7 +10,7 @@ var chainCall2 = (function () {
     context.tokens.push(context.buffer.join(""));
     context.types.push(type);
     context.buffer.length = 0;
-    if (type === GETTER_TYPE) {
+    if (type !== TEXT_TYPE) {
       context.computed = false;
     }
   }
